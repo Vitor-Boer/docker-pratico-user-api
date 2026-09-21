@@ -1,0 +1,26 @@
+// O client é gerado dentro do source tree, não no node_modules. Isso tira a CLI do Prisma
+// das dependências de runtime, mantendo a imagem Docker enxuta e o build rápido.
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+  runtime      = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Dados do participante no banco LOCAL (o container `db`, postgres:16).
+// Não há pontuação nem avatar: o progresso (qual checkpoint foi atingido) é do hub.
+//
+// A tabela é criada pela própria API na primeira consulta (ver ParticipantStore), sem migrations.
+// Se mudar este modelo, mude também o DDL em src/profile/participant.store.ts.
+model Participant {
+  id        String   @id @default(uuid()) @db.Uuid
+  nickname  String   @unique @db.VarChar(40)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@map("participants")
+}

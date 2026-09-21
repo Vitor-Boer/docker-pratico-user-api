@@ -1,0 +1,24 @@
+# Dependências
+node_modules
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+
+# Build
+dist
+
+# Prisma — client gerado dentro do source tree pelo generator `prisma-client`.
+# Não é versionado: nasce do `prisma generate`, que o postinstall roda no install.
+# Um checkout sem install não compila até rodar o generate.
+/src/generated/prisma
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

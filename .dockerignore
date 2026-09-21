@@ -1,0 +1,17 @@
+node_modules
+dist
+coverage
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+Dockerfile
+.dockerignore
+README.md
+*.log
+.vscode
+.idea
+
+# Client do Prisma: gerado dentro da imagem (prisma generate), não copiado do host.
+src/generated
