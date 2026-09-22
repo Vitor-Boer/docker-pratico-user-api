@@ -12,7 +12,8 @@ datasource db {
 }
 
 // Dados do participante no banco LOCAL (o container `db`, postgres:16).
-// Não há pontuação nem avatar: o progresso (qual checkpoint foi atingido) é do hub.
+// Não há pontuação nem avatar. Quem mostra o estado das peças é o painel do hub, e quem
+// o alimenta é o site: esta API não fala com o hub.
 //
 // A tabela é criada pela própria API na primeira consulta (ver ParticipantStore), sem migrations.
 // Se mudar este modelo, mude também o DDL em src/profile/participant.store.ts.

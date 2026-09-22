@@ -1,5 +1,4 @@
 import { Controller, Get } from '@nestjs/common';
-import { HubClient } from '../hub/hub.client';
 import { ParticipantStore } from '../profile/participant.store';
 
 type Light = 'up' | 'down';
@@ -17,23 +16,17 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 
 @Controller('status')
 export class StatusController {
-  constructor(
-    private readonly store: ParticipantStore,
-    private readonly hub: HubClient,
-  ) {}
+  constructor(private readonly store: ParticipantStore) {}
 
-  // Alimenta os indicadores do site. Nunca falha por causa de banco ou hub fora do ar:
-  // é justamente para dizer que eles estão fora.
+  // Alimenta o indicador do site e, através dele, o bloquinho do banco no painel do hub.
+  // Nunca falha por causa do banco fora do ar: é justamente para dizer que ele está fora.
   @Get()
-  async get(): Promise<{ db: Light; hub: Light }> {
-    const [db, hub] = await Promise.all([
-      withTimeout(this.store.ping(), TIMEOUT_MS).then(
-        (): Light => 'up',
-        (): Light => 'down',
-      ),
-      this.hub.isUp().then((up): Light => (up ? 'up' : 'down')),
-    ]);
+  async get(): Promise<{ db: Light }> {
+    const db = await withTimeout(this.store.ping(), TIMEOUT_MS).then(
+      (): Light => 'up',
+      (): Light => 'down',
+    );
 
-    return { db, hub };
+    return { db };
   }
 }
