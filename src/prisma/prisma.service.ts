@@ -33,8 +33,12 @@ export class PrismaService
       keepAliveInitialDelayMillis: 10000,
       idleTimeoutMillis: 120000,
       // Curto de propósito: o banco só sobe no checkpoint 3, e a API precisa responder
-      // "banco indisponível" rápido enquanto ele não está no ar.
-      connectionTimeoutMillis: 3000,
+      // "banco indisponível" rápido enquanto ele não está no ar. Tem que ficar abaixo do
+      // timeout do site (2000ms, em docker-pratico-web/src/lib/http.ts) — se a tentativa de
+      // conexão travar em vez de recusar na hora (comum atrás de firewall Linux, que derruba
+      // pacote em silêncio em vez de mandar RST), o site desiste primeiro e aborta a
+      // chamada, e o indicador de API fica "down" mesmo com ela de pé.
+      connectionTimeoutMillis: 1500,
     });
 
     const adapter = new PrismaPg(pool);
