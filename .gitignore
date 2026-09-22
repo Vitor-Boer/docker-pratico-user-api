@@ -22,3 +22,6 @@ pnpm-debug.log*
 # Sistema operacional
 .DS_Store
 Thumbs.db
+
+# Gabarito local (nunca comitar): resposta do desafio Docker.
+Dockerfile.gabarito
