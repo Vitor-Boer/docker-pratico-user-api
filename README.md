@@ -62,19 +62,21 @@ O `Dockerfile` tem lacunas marcadas com `TODO(workshop)`. Complete-as seguindo a
 
 ## Docker
 
-Depois de completar o `Dockerfile`:
+Depois de completar o `Dockerfile` (rede `workshop` já criada no passo do site, `docker-pratico-web`):
 
 ```bash
 docker build -t api .
-docker run -d --name api -p 3001:3001 \
-  -e DATABASE_URL="postgresql://postgres:postgres@host.docker.internal:5432/docker_na_pratica?schema=public" api
+docker run -d --name api --network workshop -p 3001:3001 \
+  -e DATABASE_URL="postgresql://postgres:postgres@db:5432/docker_na_pratica?schema=public" api
 ```
 
-`host.docker.internal` é o jeito do Docker Desktop (Windows/Mac) de o container falar com algo publicado no seu host — aqui, o banco abaixo. Em Linux nativo isso não resolve sozinho; adicione `--add-host=host.docker.internal:host-gateway` ao `docker run`. Sobe normal mesmo sem o banco existir ainda: só tenta conectar na primeira consulta, não na subida.
+`db` só resolve por nome porque a API está na mesma rede do banco — é o Docker cuidando do DNS entre containers sozinho. Sobe normal mesmo sem o banco existir ainda: só tenta conectar na primeira consulta, não na subida.
 
 Banco:
 
 ```bash
-docker run -d --name db -p 5432:5432 \
+docker run -d --name db --network workshop \
   -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=docker_na_pratica postgres:16
 ```
+
+Sem `-p` publicado: só a API, que já está na mesma rede, precisa alcançá-lo.
