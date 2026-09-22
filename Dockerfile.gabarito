@@ -1,0 +1,33 @@
+# Gabarito do Dockerfile da API do participante. NÃO faz parte do desafio — é a resposta,
+# preenchendo as lacunas TODO(workshop) do Dockerfile ao lado. Comitado de propósito: quem
+# não quiser ver a resposta antes de tentar, evite abrir este arquivo.
+
+# ---- Estágio 1: build ----
+FROM node:24-alpine AS build
+WORKDIR /app
+
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm exec prisma generate
+RUN pnpm run build
+
+# ---- Estágio 2: runtime (imagem final enxuta) ----
+FROM node:24-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3001
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts
+
+COPY --from=build /app/dist ./dist
+
+EXPOSE 3001
+CMD ["node", "dist/main.js"]
