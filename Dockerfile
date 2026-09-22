@@ -24,7 +24,7 @@ RUN pnpm run build
 FROM ??? AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-ENV PORT=4000
+ENV PORT=3001
 RUN corepack enable
 
 # Só as dependências de produção (sem TypeScript, Jest, Nest CLI...).
@@ -33,5 +33,5 @@ RUN pnpm install --prod --frozen-lockfile --ignore-scripts
 
 COPY --from=build /app/dist ./dist
 
-# TODO(workshop): documente a porta em que a API escuta (4000)
+# TODO(workshop): documente a porta em que a API escuta (3001)
 CMD ["node", "dist/main.js"]
