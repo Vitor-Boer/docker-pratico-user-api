@@ -59,3 +59,22 @@ pnpm test
 ## Desafio
 
 O `Dockerfile` tem lacunas marcadas com `TODO(workshop)`. Complete-as seguindo as etapas do workshop.
+
+## Docker
+
+Depois de completar o `Dockerfile`:
+
+```bash
+docker build -t api .
+docker run -d --name api -p 3001:3001 \
+  -e DATABASE_URL="postgresql://postgres:postgres@host.docker.internal:5432/docker_na_pratica?schema=public" api
+```
+
+`host.docker.internal` é o jeito do Docker Desktop (Windows/Mac) de o container falar com algo publicado no seu host — aqui, o banco abaixo. Em Linux nativo isso não resolve sozinho; adicione `--add-host=host.docker.internal:host-gateway` ao `docker run`. Sobe normal mesmo sem o banco existir ainda: só tenta conectar na primeira consulta, não na subida.
+
+Banco:
+
+```bash
+docker run -d --name db -p 5432:5432 \
+  -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=docker_na_pratica postgres:16
+```
